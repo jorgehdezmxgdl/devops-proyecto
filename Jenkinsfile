@@ -1,13 +1,13 @@
 pipeline {
     agent any
     tools {
-       maven 'maven386'
+        maven 'maven386'
     }
     stages {
-      stage('Validate'){
+        stage('Validate') {
             steps {
-                dir("Servicios/Curso-Microservicios"){
-                    withSonarQubeEnv('SonarServer'){
+                dir('Servicios/Curso-Microservicios') {
+                    withSonarQubeEnv('SonarServer') {
                         sh "mvn clean package sonar:sonar \
                             -Dsonar.projectKey=22_MyCompany_Microservice \
                             -Dsonar.projectName=22_MyCompany_Microservice \
@@ -21,15 +21,18 @@ pipeline {
 
         stage('Compile') {
             steps {
-               dir('Servicios/Curso-Microservicios') {
+                dir('Servicios/Curso-Microservicios') {
                     sh 'docker build -t microservicio .'
-                } 
+                }
             }
         }
 
-        stage('DBDeploy') {
+        stage('Push images') {
             steps {
-                sh 'docker images'
+                withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'docker-nexus', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {
+                    sh 'docker login -u $USERNAME -p $PASSWORD'
+                    sh 'docker push microservicio:lastest'
+                 }
             }
         }
     }
