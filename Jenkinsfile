@@ -4,16 +4,16 @@ pipeline {
        maven 'maven386'
     }
     stages {
-       stage('Validate'){
+      stage('Validate'){
             steps {
                 dir("Servicios/Curso-Microservicios"){
                     withSonarQubeEnv('SonarServer'){
-                        sh "mvn clean install sonar:sonar \
+                        sh "mvn clean package sonar:sonar \
                             -Dsonar.projectKey=22_MyCompany_Microservice \
                             -Dsonar.projectName=22_MyCompany_Microservice \
                             -Dsonar.sources=src/main \
                             -Dsonar.coverage.exclusions=**/*TO.java,**/*DO.java,**/curso/web/**/*,**/curso/persistence/**/*,**/curso/commons/**/*,**/curso/model/**/* \
-                            -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml"
+                            -Dsonar.coverage.jacoco.xmlReportPaths=microservicio-web/target/site/jacoco/jacoco.xml"
                     }
                 }
             }
